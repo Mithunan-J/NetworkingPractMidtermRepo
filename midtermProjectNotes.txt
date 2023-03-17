@@ -1,0 +1,26 @@
+NetworkingLecture3Sockets2 - just 2 visual studio projects basic chat with a server and client
+
+NetworkUDPLecture4 - a unity and visual studio combo, server is vs console while client is Unity (ne3Client, SampleScene) - client sends position of cube to server which prints it to its console. This is a good project, because the server finds the ip address by itself. Reminder: This one uses strings
+
+NetworkingLecture5Async - the original 2 vs projects. Client sends a couple of float values to the server. Both the server and client write the values in their consoles. This one works with floats.
+
+Notes to myself:
+I'm using 2 unity projects: ne3Client and ne3Server.
+ne3Client is the "first client".
+ne3Server is the "second client".
+
+Current ports I am using:
+First Client (ne3Client) uses 8888 for TCP and 8889 for UDP
+Second Client (ne3Server) uses 8887 for TCP and 8890 for UDP
+
+Currently I am able to send position updates from both clients to the server using UDP.
+My TCP connections are also working. Currently they post a message to the server's console when a new client connects to a port.
+
+My current problem is sending messages from the server to the clients using UDP.
+
+
+UPDATES (March 17, 2023 // 12:07 pm)
+The tcp chat works, I just have to apply it to both unity projects instead of the just the one it was made on.
+The udp sends position updates. It will send client 2's position updates to client 1 and client 1's position updates to client 2.
+
+NEXT STEP: Make the cubes move!

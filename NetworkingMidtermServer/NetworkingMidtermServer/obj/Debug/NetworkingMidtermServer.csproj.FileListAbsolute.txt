@@ -1,0 +1,7 @@
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\obj\Debug\NetworkingMidtermServer.csproj.AssemblyReference.cache
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\obj\Debug\NetworkingMidtermServer.csproj.CoreCompileInputs.cache
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\bin\Debug\NetworkingMidtermServer.exe.config
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\bin\Debug\NetworkingMidtermServer.exe
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\bin\Debug\NetworkingMidtermServer.pdb
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\obj\Debug\NetworkingMidtermServer.exe
+C:\Users\mithu\Documents\Ontario Tech\Year 3\Year 3 Semester 2\Distributed Systems and Networking\NetworkingMidtermServer\NetworkingMidtermServer\obj\Debug\NetworkingMidtermServer.pdb
