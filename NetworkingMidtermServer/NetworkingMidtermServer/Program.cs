@@ -115,27 +115,30 @@ namespace NetworkingMidtermServer
             {
                 remoteId = 0;
             }
-            if(msg == "quit") //handling voluntary disconnection
+            if (msg == "quit") //handling voluntary disconnection
             {
                 Console.WriteLine(socket.RemoteEndPoint.ToString() + " has disconnected");
                 clientSockets[clientId - 1].Close();
+                clientSockets.Remove(clientSockets[clientId - 1]);
             }
-            Console.WriteLine("Received message: " + msg + " From: " + socket.RemoteEndPoint.ToString());
-            Console.WriteLine("Sent message: " + msg + " To " + clientSockets[remoteId].RemoteEndPoint.ToString());
-
-            string newMsg = "Client " + clientId + ":" + msg;
-            byte[] newData = Encoding.ASCII.GetBytes(newMsg);
-            foreach (Socket soc in clientSockets)
+            else
             {
-                soc.BeginSend(newData, 0, newData.Length, 0, new AsyncCallback(SendCallback), soc);
+                Console.WriteLine("Received message: " + msg + " From: " + socket.RemoteEndPoint.ToString());
+                Console.WriteLine("Sent message: " + msg + " To " + clientSockets[remoteId].RemoteEndPoint.ToString());
+
+                string newMsg = "Client " + clientId + ":" + msg;
+                byte[] newData = Encoding.ASCII.GetBytes(newMsg);
+                foreach (Socket soc in clientSockets)
+                {
+                    soc.BeginSend(newData, 0, newData.Length, 0, new AsyncCallback(SendCallback), soc);
+                }
+
+                //socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), socket); //TEST UNCOMMENT LATER
+                //socket.BeginSend(buffer, 0, buffer.Length, 0, new AsyncCallback(SendCallback), socket);
+                //Console.WriteLine("Received X:" + pos[0] + " Y: " + pos[1] + "Z: " + pos[2] + "From: " + socket.RemoteEndPoint.ToString());
+
+                socket.BeginReceive(buffer, 0, buffer.Length, 0, new AsyncCallback(ReceiveCallback), socket);
             }
-
-            //socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), socket); //TEST UNCOMMENT LATER
-            //socket.BeginSend(buffer, 0, buffer.Length, 0, new AsyncCallback(SendCallback), socket);
-            //Console.WriteLine("Received X:" + pos[0] + " Y: " + pos[1] + "Z: " + pos[2] + "From: " + socket.RemoteEndPoint.ToString());
-
-            socket.BeginReceive(buffer, 0, buffer.Length, 0, new AsyncCallback(ReceiveCallback), socket);
-
         }
 
         

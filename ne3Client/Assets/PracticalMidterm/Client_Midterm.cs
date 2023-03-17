@@ -233,4 +233,11 @@ public class Client_Midterm : MonoBehaviour
         login = true;
         loginPanel.SetActive(false);
     }
+    public void Quit()
+    {
+        tcpMsg = "quit";
+        byte[] buffer = Encoding.ASCII.GetBytes(tcpMsg);
+        client.Send(buffer);
+        client.Close();
+    }
 }
