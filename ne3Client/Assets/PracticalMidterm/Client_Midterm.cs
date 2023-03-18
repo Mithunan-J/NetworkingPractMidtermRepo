@@ -72,30 +72,28 @@ public class Client_Midterm : MonoBehaviour
         if(login == true) //testing if statement login stuff
         {
             //UDP Position Updates
-            string pos = myCube.transform.position.x.ToString() + "," + myCube.transform.position.y.ToString() + "," + myCube.transform.position.z.ToString();
+            string pos = myCube.transform.position.x.ToString() + "," + myCube.transform.position.y.ToString() + "," + myCube.transform.position.z.ToString();            
             //outBuffer = Encoding.ASCII.GetBytes(myCube.transform.position.ToString());
             outBuffer = Encoding.ASCII.GetBytes(pos); //TEST MIGHT REMOVE LATER
             if (cubePos != myCube.transform.position)
             {
-                clientSoc.SendTo(outBuffer, remoteEP);
+                float[] floatPos = new float[] { myCube.transform.position.x, myCube.transform.position.y, myCube.transform.position.z };
+                byte[] bpos = new byte[floatPos.Length * 4];
+                Buffer.BlockCopy(floatPos, 0, bpos, 0, bpos.Length);
+                clientSoc.SendTo(bpos, remoteEP); //used to be outbuffer
                 cubePos = myCube.transform.position;
             }
 
             if (clientSoc.Available > 0)
             {
                 int recv = clientSoc.ReceiveFrom(buffer, ref remoteServer);
-                Debug.Log("Recv from: " + remoteServer.ToString() + "Data: " + Encoding.ASCII.GetString(buffer, 0, recv));
-
-                string remoteCubePosStr = Encoding.ASCII.GetString(buffer, 0, recv);
-                var remoteCubePos = remoteCubePosStr.Split(':');
-                string remoteCubePos2 = remoteCubePos[1];
-                var remoteCubePos3 = remoteCubePos2.Split(',');
-                //Debug.Log(remoteCubePos3[0] + " " + remoteCubePos3[1] + " " + remoteCubePos3[2]);
+                float[] serverMsg = new float[recv / 4];
+                Buffer.BlockCopy(buffer, 0, serverMsg, 0, recv);
+                Debug.Log("Recv from: " + remoteServer.ToString() + "Data: " + serverMsg[0] + " " + serverMsg[1] + " " + serverMsg[2]);
                 float x, y, z;
-                x = float.Parse(remoteCubePos3[0]);
-                y = float.Parse(remoteCubePos3[1]);
-                z = float.Parse(remoteCubePos3[2]);
-
+                x = serverMsg[0];
+                y = serverMsg[1];
+                z = serverMsg[2];
                 remoteCube.transform.position = new Vector3(x, y, z);
             }
         }
@@ -194,7 +192,7 @@ public class Client_Midterm : MonoBehaviour
     {
         try
         {
-            IPAddress ip = IPAddress.Parse("127.0.0.1");
+            IPAddress ip = IPAddress.Parse(_ip);
             remoteEP = new IPEndPoint(ip, 8889);
 
             clientSoc = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -202,7 +200,10 @@ public class Client_Midterm : MonoBehaviour
             remoteServer = new IPEndPoint(ip, 8889); //test
 
             //More Tests
-            byte[] connectionMessage = Encoding.ASCII.GetBytes("Hi from ne3Client");
+            float[] testFloatMsg = { 1f, 2f, 3f };
+            byte[] connectionMessage = new byte[testFloatMsg.Length * 4]; //set up new byte array with the appropriate size
+
+            Buffer.BlockCopy(testFloatMsg, 0, connectionMessage, 0, connectionMessage.Length);
             clientSoc.SendTo(connectionMessage, remoteEP);
         }
         catch (Exception e)
@@ -232,5 +233,13 @@ public class Client_Midterm : MonoBehaviour
         StartTCPClient(logInTextField.GetComponent<TMP_InputField>().text);
         login = true;
         loginPanel.SetActive(false);
+    }
+
+    public void Quit()
+    {
+        tcpMsg = "quit";
+        byte[] buffer = Encoding.ASCII.GetBytes(tcpMsg);
+        client.Send(buffer);
+        client.Close();
     }
 }

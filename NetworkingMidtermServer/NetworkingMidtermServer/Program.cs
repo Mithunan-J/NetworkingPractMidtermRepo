@@ -119,22 +119,28 @@ namespace NetworkingMidtermServer
             {
                 Console.WriteLine(socket.RemoteEndPoint.ToString() + " has disconnected");
                 clientSockets[clientId - 1].Close();
+                clientSockets.RemoveAt(clientId - 1);
             }
-            Console.WriteLine("Received message: " + msg + " From: " + socket.RemoteEndPoint.ToString());
-            Console.WriteLine("Sent message: " + msg + " To " + clientSockets[remoteId].RemoteEndPoint.ToString());
-
-            string newMsg = "Client " + clientId + ":" + msg;
-            byte[] newData = Encoding.ASCII.GetBytes(newMsg);
-            foreach (Socket soc in clientSockets)
+            else //testing massive else statement //purpose: prevents access to disconnected server and thus avoiding an error.
             {
-                soc.BeginSend(newData, 0, newData.Length, 0, new AsyncCallback(SendCallback), soc);
-            }
+                Console.WriteLine(clientId);
+                Console.WriteLine("Received message: " + msg + " From: " + socket.RemoteEndPoint.ToString());
+                Console.WriteLine("Sent message: " + msg + " To " + clientSockets[remoteId].RemoteEndPoint.ToString());
 
-            //socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), socket); //TEST UNCOMMENT LATER
-            //socket.BeginSend(buffer, 0, buffer.Length, 0, new AsyncCallback(SendCallback), socket);
-            //Console.WriteLine("Received X:" + pos[0] + " Y: " + pos[1] + "Z: " + pos[2] + "From: " + socket.RemoteEndPoint.ToString());
 
-            socket.BeginReceive(buffer, 0, buffer.Length, 0, new AsyncCallback(ReceiveCallback), socket);
+                string newMsg = "Client " + clientId + ":" + msg;
+                byte[] newData = Encoding.ASCII.GetBytes(newMsg);
+                foreach (Socket soc in clientSockets)
+                {
+                    soc.BeginSend(newData, 0, newData.Length, 0, new AsyncCallback(SendCallback), soc);
+                }
+
+                //socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), socket); //TEST UNCOMMENT LATER
+                //socket.BeginSend(buffer, 0, buffer.Length, 0, new AsyncCallback(SendCallback), socket);
+                //Console.WriteLine("Received X:" + pos[0] + " Y: " + pos[1] + "Z: " + pos[2] + "From: " + socket.RemoteEndPoint.ToString());
+
+                socket.BeginReceive(buffer, 0, buffer.Length, 0, new AsyncCallback(ReceiveCallback), socket);
+            }           
 
         }
 
@@ -183,6 +189,8 @@ namespace NetworkingMidtermServer
                     if(server.Available > 0) //test if statement
                     {
                         int recv = server.ReceiveFrom(buffer, ref remoteClient);
+                        float[] pos = new float[recv / 4];
+                        Buffer.BlockCopy(buffer, 0, pos, 0, recv);
 
                         if(udp1 == false)
                         {
@@ -191,14 +199,16 @@ namespace NetworkingMidtermServer
                         }
 
                         // server.SendTo()
-                        Console.WriteLine("Recv from: {0}   Data: {1}", remoteClient.ToString(), Encoding.ASCII.GetString(buffer, 0, recv));
+                        //Console.WriteLine("Recv from: {0}   Data: {1}", remoteClient.ToString(), Encoding.ASCII.GetString(buffer, 0, recv));
+                        Console.WriteLine("Recv from: " + remoteClient.ToString() + " Data: " + pos[0] + " " + pos[1] + " " + pos[2]);
                         if(udp2 == true)
                         {
-                            Console.WriteLine("Sent: {0}    to   {1}", Encoding.ASCII.GetString(buffer, 0, recv), client2Endpoint.ToString());
+                            //Console.WriteLine("Sent: {0}    to   {1}", Encoding.ASCII.GetString(buffer, 0, recv), client2Endpoint.ToString());
+                            Console.WriteLine("Sent: " + pos[0] + " " + pos[1] + " " + pos[2] + " to " + client2Endpoint.ToString());
                         }
                         
-                        string pos = Encoding.ASCII.GetString(buffer, 0, recv);
-                        var result = pos.Split(',');
+                        //string pos = Encoding.ASCII.GetString(buffer, 0, recv); //old string stuff
+                        //var result = pos.Split(',');
                         //Console.WriteLine("X position: " + result[0] + " Y position: " + result[1] + " Z position: " + result[2]);
 
                         //foreach (Socket socket in clientSockets)
@@ -209,7 +219,9 @@ namespace NetworkingMidtermServer
                         //}
 
                         string newPos = "Client 1: " + pos;
-                        byte[] outBuffer = Encoding.ASCII.GetBytes(newPos);
+                        //byte[] outBuffer = Encoding.ASCII.GetBytes(newPos);
+                        byte[] outBuffer = new byte[pos.Length * 4];
+                        Buffer.BlockCopy(pos, 0, outBuffer, 0, outBuffer.Length);
                         //server.SendTo(outBuffer, remoteClient); //send message back to the owner.
                         if (udp2 == true)
                         {
@@ -221,21 +233,25 @@ namespace NetworkingMidtermServer
                     if (server2.Available > 0) //test if statement
                     {
                         int recv2 = server2.ReceiveFrom(buffer2, ref remoteClient2);
+                        float[] pos2 = new float[recv2 / 4];
+                        Buffer.BlockCopy(buffer2, 0, pos2, 0, recv2);
 
-                        if(udp2 == false)
+                        if (udp2 == false)
                         {
                             client2Endpoint = remoteClient2; //test statement
                             udp2 = true;
                         }
 
                         // server.SendTo()
-                        Console.WriteLine("Recv from: {0}   Data: {1}", remoteClient2.ToString(), Encoding.ASCII.GetString(buffer2, 0, recv2));
+                        //Console.WriteLine("Recv from: {0}   Data: {1}", remoteClient2.ToString(), Encoding.ASCII.GetString(buffer2, 0, recv2));
+                        Console.WriteLine("Recv from: " + remoteClient2.ToString() + " Data: " + pos2[0] + " " + pos2[1] + " " + pos2[2]);
                         if (udp1 == true)
                         {
-                            Console.WriteLine("Sent: {0}    to   {1}", Encoding.ASCII.GetString(buffer, 0, recv2), client1Endpoint.ToString());
+                            //Console.WriteLine("Sent: {0}    to   {1}", Encoding.ASCII.GetString(buffer, 0, recv2), client1Endpoint.ToString());
+                            Console.WriteLine("Sent: " + pos2[0] + " " + pos2[1] + " " + pos2[2] + " to " + client1Endpoint.ToString());
                         }
-                        string pos2 = Encoding.ASCII.GetString(buffer2, 0, recv2);
-                        var result2 = pos2.Split(',');
+                        //string pos2 = Encoding.ASCII.GetString(buffer2, 0, recv2);
+                        //var result2 = pos2.Split(',');
                         //Console.WriteLine("X position: " + result2[0] + " Y position: " + result2[1] + " Z position: " + result2[2]);
 
 
@@ -247,9 +263,11 @@ namespace NetworkingMidtermServer
                         //}
 
                         string newPos = "Client 2: " + pos2;
-                        byte[] outBuffer = Encoding.ASCII.GetBytes(newPos);
+                        //byte[] outBuffer = Encoding.ASCII.GetBytes(newPos);
+                        byte[] outBuffer = new byte[pos2.Length * 4];
+                        Buffer.BlockCopy(pos2, 0, outBuffer, 0, outBuffer.Length);
                         //server2.SendTo(outBuffer, remoteClient2); //send message back to owner.
-                        if(udp1 == true)
+                        if (udp1 == true)
                         {
                             server2.SendTo(outBuffer, client1Endpoint); //send message to the other client
                         }
