@@ -123,10 +123,12 @@ namespace NetworkingMidtermServer
             }
             else //testing massive else statement //purpose: prevents access to disconnected server and thus avoiding an error.
             {
-                Console.WriteLine(clientId);
+                //Console.WriteLine(clientId);
                 Console.WriteLine("Received message: " + msg + " From: " + socket.RemoteEndPoint.ToString());
-                Console.WriteLine("Sent message: " + msg + " To " + clientSockets[remoteId].RemoteEndPoint.ToString());
-
+                if(clientSockets.Count > 1) //basically only sends the second message if there is a second client.
+                {
+                    Console.WriteLine("Sent message: " + msg + " To " + clientSockets[remoteId].RemoteEndPoint.ToString());
+                }
 
                 string newMsg = "Client " + clientId + ":" + msg;
                 byte[] newData = Encoding.ASCII.GetBytes(newMsg);
