@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Exercise4/Exercise4Scene.unity
     guid: a6f05afce17a7e84ea7d911457f749c2
+  - enabled: 1
+    path: Assets/PracticalMidterm/Client_Midterm_Scene.unity
+    guid: 3734e608dc1e8e14280bce59d4155701
   m_configObjects: {}
